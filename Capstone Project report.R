@@ -77,10 +77,5 @@ df_ngram
 
 ##plot the graph
 
-ggplot(df_ngram, aes(x=reorder(unigram_combi,Freq1), y=(Freq1))) +
-  geom_bar(stat="Identity", fill="#AAAAAA",color="darkred")+
-  xlab("Unigrams") + ylab("Frequency")+
-  ggtitle("Most common 15 Unigrams")+
-  theme(axis.text.x=element_text(angle=90, hjust=1))
 
 
