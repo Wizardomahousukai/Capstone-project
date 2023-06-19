@@ -1,0 +1,86 @@
+#Load the data
+
+CapstoneURL <- "https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip"
+
+download.file(CapstoneURL,destfile = "./Coursera-SwiftKey.zip",method = "curl")
+
+unzip("./Coursera-SwiftKey.zip")
+
+writtennews <- readLines("./final/en_US/en_US.news.txt", encoding = "UTF-8", skipNul=TRUE)
+
+Writtenblogs <- readLines("./final/en_US/en_US.blogs.txt", encoding = "UTF-8", skipNul=TRUE)
+
+Twitterposts <- readLines("./final/en_US/en_US.twitter.txt", encoding = "UTF-8", skipNul=TRUE)
+
+newsCon <- file("./final/en_US/en_US.news.txt", open = "rb")
+
+install.packages("ngram")
+
+library("ngram")
+
+#count the number of lines and words
+
+linesinnews <- length(writtennews)
+
+linesinposts <- length(Twitterposts)
+
+linesinblogs <- length(Writtenblogs)
+
+wordsinnews <- wordcount(writtennews)
+
+wordsinposts <- wordcount(Twitterposts)
+
+wordsinblogs <- wordcount(Writtenblogs)
+
+a<-rbind(linesinnews,linesinposts,linesinblogs)
+
+b<-rbind(wordsinnews,wordsinposts,wordsinblogs)
+
+c<-as.data.frame(cbind(a,b))
+
+names(c)<-c("number of lines","number of words")
+
+rownames(c)<-c("news","twitter","blogs")
+
+c
+
+##Create the sample
+
+set.seed(10000)
+sampleblogs <- sample(writtennews, length(linesinnews)*0.01)
+
+sample_news <- sample(Writtenblogs, length(Writtenblogs)*0.01)
+
+sample_twitter <- sample(Twitterposts, length(Twitterposts)*0.01)
+
+Sample_combi=c(sampleblogs,sample_news,sample_twitter)
+
+install.packages("Rweka")
+library(RWeka)
+
+install.packages(dplyr)
+library(dplyr)
+
+
+
+unigram_combi <- NGramTokenizer(Sample_combi, Weka_control(min = 1, max = 1))
+bigram_combi <- NGramTokenizer(Sample_combi, Weka_control(min = 2, max = 2)) 
+trigram_combi <- NGramTokenizer(Sample_combi, Weka_control(min = 3, max = 3)) 
+
+unigram_combi<-data.frame(table(unigram_combi))%>%arrange(desc(Freq))
+bigram_combi<-data.frame(table(bigram_combi))%>%arrange(desc(Freq))
+trigram_combi<-data.frame(table(trigram_combi))%>%arrange(desc(Freq))
+
+df_ngram<-as.data.frame(cbind(unigram_combi[1:15,],bigram_combi[1:15,],trigram_combi[1:15,]))
+names(df_ngram)[c(2,4,6)]<-c("Freq1","Freq2","Freq3")
+df_ngram
+
+##plot the graph
+
+ggplot(df_ngram, aes(x=reorder(unigram_combi,Freq1), y=(Freq1))) +
+  geom_bar(stat="Identity", fill="#AAAAAA",color="darkred")+
+  xlab("Unigrams") + ylab("Frequency")+
+  ggtitle("Most common 15 Unigrams")+
+  theme(axis.text.x=element_text(angle=90, hjust=1))
+
+
