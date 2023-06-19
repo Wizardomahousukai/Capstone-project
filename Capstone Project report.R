@@ -77,5 +77,9 @@ df_ngram
 
 ##plot the graph
 
-
+ggplot(df_ngram, aes(x=reorder(unigram_combi,Freq1), y=(Freq1))) +
+  geom_bar(stat="Identity", fill="#BBBB",color="blue")+
+  xlab("Unigrams") + ylab("Frequency")+
+  ggtitle("Top 15 Words")+
+  theme(axis.text.x=element_text(angle=90, hjust=1))
 
