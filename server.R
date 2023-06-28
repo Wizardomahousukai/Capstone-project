@@ -1,25 +1,42 @@
 library(shiny)
 
-install.packages("sbo")
-library(sbo)
+library(tm)
 
-head(sbo::twitter_train, 3)
+CapstoneURL <- "https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip"
 
-word <- sbo_predictor(object = sbo::twitter_train, # preloaded example dataset
-                      N = 3, # Train a 3-gram model
-                      dict = target ~ 0.75, # cover 75% of training corpus
-                      .preprocess = sbo::preprocess, # Preprocessing transformation 
-                      EOS = ".?!:;", # End-Of-Sentence tokens
-                      lambda = 0.4, # Back-off penalization in SBO algorithm
-                      L = 3L, # Number of predictions for input
-                      filtered = "<UNK>" # Exclude the <UNK> token from predictions
-)
+download.file(CapstoneURL,destfile = "./Coursera-SwiftKey.zip",method = "curl")
 
-predictedword <- predict(word,"i love")
+unzip("./Coursera-SwiftKey.zip")
 
-# Define server logic required to draw a histogram
-function(input, output, session) {
 
-    output$distPlot <- predictedword
+pre <- function(str,n){
+  vs <- VectorSource(str)
+  fp <- VCorpus(vs, readerControl = list(reader = readPlain, language = "en",load=TRUE))
 
+  
+  content <- fp$content[[1]]
+  temp <- tail(unlist(strsplit(content,split=" ")),n)
+  return(paste(temp,collapse =" "))
+  
 }
+
+aboveword <- function(str,n){
+  tail1 <- Twitterposts[grep(paste("^",pre(str,1)," ",sep=""),names(Twitterposts))]
+  topn <- names(sort(tail1,decreasing = T))[1:n]
+  sapply(strsplit(topn ,split=" "),function(x) x[2])
+}
+
+
+
+shinyServer(
+  function(input, output) {
+      output$topn = renderPrint({
+      isolate(aboveword(input$text1,input$n))
+    })
+    
+      output$top1 = renderPrint({
+      isolate(aboveword(input$text1,1))
+    })
+    
+  }
+)
