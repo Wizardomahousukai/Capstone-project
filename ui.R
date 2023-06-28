@@ -7,35 +7,20 @@
 #    http://shiny.rstudio.com/
 #
 
+# load shiny package
 library(shiny)
-
-# Define UI for application that draws a histogram
-fluidPage(
-
-    # Application title
-    titlePanel("Next word predictor"),
-
-    # Sidebar with a slider input for number of bins
-    sidebarLayout(
-        sidebarPanel(
-          h2("What is the next word"),
-          h5("by Joel"),
-          br(),
-          h4("Please type your entry below"),
-          textInput(inputId = "userText", 
-                    label = "", 
-                    value = "" # 
-          ),
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-            plotOutput("distPlot")
-        )
-    )
-)
+# begin shiny UI
+shinyUI(pageWithSidebar(
+  headerPanel("Smart prediction technology for easier mobile typing by Joel Seah"),
+  sidebarPanel(
+    textInput(inputId="text1", label = "Please enter some words"),
+  ),
+  mainPanel(
+    h3('Prediction result'),
+    h4('Show the top n most likely words'),
+    verbatimTextOutput("topn"),
+    h4('Prediction result of the next word'),
+    verbatimTextOutput("top1")
+    
+  )
+))
