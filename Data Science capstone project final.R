@@ -12,4 +12,4 @@ word <- sbo_predictor(object = sbo::twitter_train, # preloaded example dataset
                    filtered = "<UNK>" # Exclude the <UNK> token from predictions
 )
 
-predictedword <- predict(word,"Data Science")
+predictedword <- predict(word,"i love")
