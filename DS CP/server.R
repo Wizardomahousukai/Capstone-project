@@ -9,13 +9,13 @@ library(data.table)
 load("projectdata.Rdata")
 
 
-#Prediction function
+#What the predicted word is
 word_predict <- function(sentence, n = 12){
   
-  #clean the text
+  #text cleaning
   sentence <- tolower(removePunctuation(removeNumbers(sentence)))
   
-  #Cleaned data gets split
+  #split data
   words <- unlist(strsplit(sentence, split = " "))
   
   #last 5 words are the possible outcomes
