@@ -27,7 +27,7 @@ word_predict <- function(sentence, n = 12){
   
   df <- data.table()
   
-  
+  ##Give a predicted result every 2 words
   
   if (nrow(df)==0 & !is.na(word2)) {
     if(nrow(df) == 0) df <- subset(ngram3, w1==word1 & w2==word2)
@@ -51,7 +51,7 @@ word_predict <- function(sentence, n = 12){
 }
 
 
-##What the server does
+##Print the predicted output
 
 shinyServer(function(input, output) {
   
